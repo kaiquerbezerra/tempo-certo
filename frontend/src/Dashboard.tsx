@@ -122,8 +122,7 @@ export default function Dashboard() {
               size="small"
               placeholder="Buscar cidade"
               value={search}
-              // Removed onChange to prevent unused state setter warning
-              // onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
