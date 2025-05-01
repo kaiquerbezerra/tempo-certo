@@ -1,0 +1,146 @@
+import {Box, Button, Grid, InputAdornment, Paper, TextField} from "@mui/material";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import {TimePicker} from "@mui/x-date-pickers/TimePicker";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {useState} from "react";
+import {Dayjs} from "dayjs";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
+import {Outlet, useSearchParams} from "react-router";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import lodash from 'lodash';
+
+export function GeochronologicalFilters() {
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const [startDate, setStartDate] = useState<Dayjs | null>(null)
+    const [endDate, setEndDate] = useState<Dayjs | null>(null)
+    const [startTime, setStartTime] = useState<Dayjs | null>(null)
+    const [endTime, setEndTime] = useState<Dayjs | null>(null)
+    const [search, setSearch] = useState<string>(searchParams.get('search') ?? '');
+
+
+    const setSearchParamDebounced = lodash.debounce((key: string, value: string) => setSearchParams((prev) => {
+        prev.set(key, value);
+        return prev;
+    }), 750)
+
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+            <Box p={4}>
+                <Grid container spacing={2} alignItems="center" direction="column">
+                    <Grid container sx={{width: '100%'}} direction="row" justifyContent="space-between">
+                        <Grid>
+                            <Paper variant="outlined" sx={{p: 2, display: 'flex', gap: 1}}>
+                                <DatePicker
+                                    label="Data de início"
+                                    value={startDate}
+                                    onChange={setStartDate}
+                                    slotProps={{
+                                        textField: {
+                                            size: 'small',
+                                            InputProps: {
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <CalendarTodayIcon fontSize="small"/>
+                                                    </InputAdornment>
+                                                ),
+                                            }
+                                        }
+                                    }}
+                                />
+                                <TimePicker
+                                    label="Hora de início"
+                                    value={startTime}
+                                    onChange={setStartTime}
+                                    slotProps={{
+                                        textField: {
+                                            size: 'small',
+                                            InputProps: {
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <AccessTimeIcon fontSize="small"/>
+                                                    </InputAdornment>
+                                                ),
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Paper>
+                        </Grid>
+                        <Grid>
+                            <Paper variant="outlined" sx={{p: 2, display: 'flex', gap: 1}}>
+                                <DatePicker
+                                    label="Data de término"
+                                    value={endDate}
+                                    onChange={setEndDate}
+                                    slotProps={{
+                                        textField: {
+                                            size: 'small',
+                                            InputProps: {
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <CalendarTodayIcon fontSize="small"/>
+                                                    </InputAdornment>
+                                                ),
+                                            }
+                                        }
+                                    }}
+                                />
+                                <TimePicker
+                                    label="Hora de término"
+                                    value={endTime}
+                                    onChange={setEndTime}
+                                    slotProps={{
+                                        textField: {
+                                            size: 'small',
+                                            InputProps: {
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <AccessTimeIcon fontSize="small"/>
+                                                    </InputAdornment>
+                                                ),
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Paper>
+                        </Grid>
+                        <Grid>
+                            <Paper variant="outlined" sx={{p: 2, display: 'flex', gap: 1}}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Buscar cidade"
+                                    value={search}
+                                    onChange={(e) => {
+                                        e.preventDefault()
+                                        setSearch(e.target.value)
+                                        setSearchParamDebounced('search', e.target.value)
+                                    }}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <SearchIcon fontSize="small"/>
+                                                </InputAdornment>
+                                            ),
+                                        }
+                                    }}/>
+                            </Paper>
+                        </Grid>
+                        <Grid container sx={{width: '100%'}} justifyContent="end" direction="row">
+                            <Button variant="contained" size="medium" endIcon={<ArrowRightAlt/>}>
+                                Analisar
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Outlet/>
+            </Box>
+        </LocalizationProvider>
+    )
+}
