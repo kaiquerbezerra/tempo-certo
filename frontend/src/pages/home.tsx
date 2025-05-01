@@ -11,7 +11,7 @@ export function Home() {
                 height="100%"
                 style={{border: 0}}
                 src={`https://www.google.com/maps?q=${encodeURIComponent(
-                    searchParams.get('search') ?? ''
+                    searchParams.get('location') ?? ''
                 )}&output=embed`}
                 allowFullScreen
             />

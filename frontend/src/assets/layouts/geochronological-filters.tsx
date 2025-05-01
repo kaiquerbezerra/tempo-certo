@@ -7,19 +7,26 @@ import {useState} from "react";
 import {Dayjs} from "dayjs";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
-import {Outlet, useSearchParams} from "react-router";
+import {Link, Outlet, useLocation, useSearchParams} from "react-router";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import lodash from 'lodash';
 
 export function GeochronologicalFilters() {
     const [searchParams, setSearchParams] = useSearchParams()
+    const locationObject = useLocation()
 
     const [startDate, setStartDate] = useState<Dayjs | null>(null)
     const [endDate, setEndDate] = useState<Dayjs | null>(null)
     const [startTime, setStartTime] = useState<Dayjs | null>(null)
     const [endTime, setEndTime] = useState<Dayjs | null>(null)
-    const [search, setSearch] = useState<string>(searchParams.get('search') ?? '');
+    const [location, setLocation] = useState<string>(searchParams.get('location') ?? '');
+
+    const dashboardQueryParams = new URLSearchParams({
+        location,
+        startsAt: (startDate && startTime) ? new Date(startDate.year(), startDate.month(), startDate.date(), startTime.hour(), startTime.minute(), startTime.second(), startTime.millisecond()).toISOString() : '',
+        endsAt: (endDate && endTime) ? new Date(endDate.year(), endDate.month(), endDate.date(), endTime.hour(), endTime.minute(), endTime.second(), endTime.millisecond()).toISOString() : '',
+    })
 
 
     const setSearchParamDebounced = lodash.debounce((key: string, value: string) => setSearchParams((prev) => {
@@ -115,11 +122,11 @@ export function GeochronologicalFilters() {
                                     fullWidth
                                     size="small"
                                     placeholder="Buscar cidade"
-                                    value={search}
+                                    value={location}
                                     onChange={(e) => {
                                         e.preventDefault()
-                                        setSearch(e.target.value)
-                                        setSearchParamDebounced('search', e.target.value)
+                                        setLocation(e.target.value)
+                                        setSearchParamDebounced('location', e.target.value)
                                     }}
                                     slotProps={{
                                         input: {
@@ -132,11 +139,18 @@ export function GeochronologicalFilters() {
                                     }}/>
                             </Paper>
                         </Grid>
-                        <Grid container sx={{width: '100%'}} justifyContent="end" direction="row">
-                            <Button variant="contained" size="medium" endIcon={<ArrowRightAlt/>}>
-                                Analisar
-                            </Button>
-                        </Grid>
+                        {
+                            locationObject.pathname === '/' ? (
+                                <Grid container sx={{width: '100%'}} justifyContent="end" direction="row">
+                                    <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
+                                        <Button variant="contained" size="medium"
+                                                endIcon={<ArrowRightAlt/>}>
+                                            Analisar
+                                        </Button>
+                                    </Link>
+                                </Grid>
+                            ) : null
+                        }
                     </Grid>
                 </Grid>
                 <Outlet/>
