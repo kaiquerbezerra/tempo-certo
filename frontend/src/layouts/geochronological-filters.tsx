@@ -1,0 +1,236 @@
+import {
+  Box,
+  Button,
+  Grid,
+  InputAdornment,
+  Paper,
+  TextField,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
+import { Link, Outlet, useLocation, useSearchParams } from "react-router";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import lodash from "lodash";
+import "dayjs/locale/pt-br.js";
+import { TemperatureUnitSwitch } from "../components/temperature-unit-switch.ts";
+
+export function GeochronologicalFilters() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const locationObject = useLocation();
+  const startsAtParam = searchParams.get("startsAt");
+  const startsAt = startsAtParam ? new Date(startsAtParam) : null;
+  const endsAtParam = searchParams.get("endsAt");
+  const endsAt = endsAtParam ? new Date(endsAtParam) : null;
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(
+    startsAt &&
+      dayjs()
+        .year(startsAt.getFullYear())
+        .month(startsAt.getMonth())
+        .date(startsAt.getDate()),
+  );
+  const [endDate, setEndDate] = useState<Dayjs | null>(
+    endsAt &&
+      dayjs()
+        .year(endsAt.getFullYear())
+        .month(endsAt.getMonth())
+        .date(endsAt.getDate()),
+  );
+  const [startTime, setStartTime] = useState<Dayjs | null>(
+    startsAt &&
+      dayjs()
+        .hour(startsAt.getHours())
+        .minute(startsAt.getMinutes())
+        .second(startsAt.getSeconds()),
+  );
+  const [endTime, setEndTime] = useState<Dayjs | null>(
+    endsAt &&
+      dayjs()
+        .hour(endsAt.getHours())
+        .minute(endsAt.getMinutes())
+        .second(endsAt.getSeconds()),
+  );
+
+  const [location, setLocation] = useState<string>(
+    searchParams.get("location") ?? "",
+  );
+
+  const [isUsingFahrenheit, setIsUsingFahrenheit] = useState<boolean>(
+    searchParams.get("isUsingFahrenheit")
+      ? searchParams.get("isUsingFahrenheit") === "true"
+      : false,
+  );
+
+  const dashboardQueryParams = new URLSearchParams({
+    location,
+    startsAt:
+      startDate && startTime
+        ? new Date(
+            startDate.year(),
+            startDate.month(),
+            startDate.date(),
+            startTime.hour(),
+            startTime.minute(),
+            startTime.second(),
+            startTime.millisecond(),
+          ).toISOString()
+        : "",
+    endsAt:
+      endDate && endTime
+        ? new Date(
+            endDate.year(),
+            endDate.month(),
+            endDate.date(),
+            endTime.hour(),
+            endTime.minute(),
+            endTime.second(),
+            endTime.millisecond(),
+          ).toISOString()
+        : "",
+  });
+
+  const setSearchParamDebounced = lodash.debounce(
+    (key: string, value: string) =>
+      setSearchParams((prev) => {
+        prev.set(key, value);
+        return prev;
+      }),
+    750,
+  );
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
+      <Box p={4}>
+        <Grid container spacing={2} alignItems="center" direction="column">
+          <Grid
+            container
+            sx={{ width: "100%" }}
+            direction="row"
+            justifyContent="space-between"
+          >
+            <Grid>
+              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
+                <DatePicker
+                  label="Data de início"
+                  value={startDate}
+                  onChange={setStartDate}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
+                />
+                <TimePicker
+                  label="Hora de início"
+                  value={startTime}
+                  onChange={setStartTime}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
+                />
+              </Paper>
+            </Grid>
+            <Grid>
+              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
+                <DatePicker
+                  label="Data de término"
+                  value={endDate}
+                  onChange={setEndDate}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
+                />
+                <TimePicker
+                  label="Hora de término"
+                  value={endTime}
+                  onChange={setEndTime}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
+                />
+              </Paper>
+            </Grid>
+            <Grid>
+              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Buscar cidade"
+                  value={location}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setLocation(e.target.value);
+                    setSearchParamDebounced("location", e.target.value);
+                  }}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              </Paper>
+            </Grid>
+            {locationObject.pathname === "/dashboard" ? (
+              <Grid>
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 2, display: "flex", gap: 1 }}
+                >
+                  <TemperatureUnitSwitch
+                    checked={isUsingFahrenheit}
+                    onChange={() => {
+                      setIsUsingFahrenheit((prev) => !prev);
+                      setSearchParams((prev) => {
+                        prev.set(
+                          "isUsingFahrenheit",
+                          String(!(prev.get("isUsingFahrenheit") === "true")),
+                        );
+                        return prev;
+                      });
+                    }}
+                  />
+                </Paper>
+              </Grid>
+            ) : null}
+            {locationObject.pathname === "/" ? (
+              <Grid
+                container
+                sx={{ width: "100%" }}
+                justifyContent="end"
+                direction="row"
+              >
+                <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    endIcon={<ArrowRightAlt />}
+                  >
+                    Analisar
+                  </Button>
+                </Link>
+              </Grid>
+            ) : null}
+          </Grid>
+        </Grid>
+      </Box>
+      <Box px={4}>
+        <Outlet />
+      </Box>
+    </LocalizationProvider>
+  );
+}

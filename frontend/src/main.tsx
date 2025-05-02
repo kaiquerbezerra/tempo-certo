@@ -1,7 +1,7 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import {BrowserRouter, Route, Routes} from "react-router";
-import {GeochronologicalFilters} from "./assets/layouts/geochronological-filters.tsx";
+import {GeochronologicalFilters} from "./layouts/geochronological-filters.tsx";
 import {Home} from './pages/home.tsx';
 import { Dashboard } from './pages/dashboard.tsx';
 
