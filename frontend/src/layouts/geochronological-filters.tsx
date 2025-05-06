@@ -106,87 +106,112 @@ export function GeochronologicalFilters() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
       <Box p={4}>
-        <Grid container spacing={2} alignItems="center" direction="column">
-          <Grid
-            container
-            sx={{ width: "100%" }}
-            direction="row"
-            justifyContent="space-between"
-          >
-            <Grid>
-              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
-                <DatePicker
-                  label="Data de início"
-                  value={startDate}
-                  onChange={setStartDate}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-                <TimePicker
-                  label="Hora de início"
-                  value={startTime}
-                  onChange={setStartTime}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-              </Paper>
-            </Grid>
-            <Grid>
-              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
-                <DatePicker
-                  label="Data de término"
-                  value={endDate}
-                  onChange={setEndDate}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-                <TimePicker
-                  label="Hora de término"
-                  value={endTime}
-                  onChange={setEndTime}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-              </Paper>
-            </Grid>
-            <Grid>
-              <Paper variant="outlined" sx={{ p: 2, display: "flex", gap: 1 }}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="Buscar cidade"
-                  value={location}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setLocation(e.target.value);
-                    setSearchParamDebounced("location", e.target.value);
-                  }}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Paper>
+        <Grid container spacing={2} justifyItems="center" direction="column">
+          <Grid container justifyContent="space-between" alignItems="center">
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="start"
+              size={11}
+            >
+              <Grid size={4}>
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 2, display: "flex", gap: 1 }}
+                >
+                  <DatePicker
+                    label="Data de início"
+                    value={startDate}
+                    onChange={setStartDate}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                  <TimePicker
+                    label="Hora de início"
+                    value={startTime}
+                    onChange={setStartTime}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </Paper>
+              </Grid>
+              <Grid size={4}>
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 2, display: "flex", gap: 1 }}
+                >
+                  <DatePicker
+                    label="Data de término"
+                    value={endDate}
+                    onChange={setEndDate}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                  <TimePicker
+                    label="Hora de término"
+                    value={endTime}
+                    onChange={setEndTime}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </Paper>
+              </Grid>
+              <Grid>
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 2, display: "flex", gap: 1 }}
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    placeholder="Buscar cidade"
+                    value={location}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setLocation(e.target.value);
+                      setSearchParamDebounced("location", e.target.value);
+                    }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </Paper>
+              </Grid>
+              {locationObject.pathname === "/" ? (
+                <Grid container justifyContent="start" direction="row" size={2}>
+                  <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
+                    <Button
+                      variant="contained"
+                      size="medium"
+                      endIcon={<ArrowRightAlt />}
+                    >
+                      Analisar
+                    </Button>
+                  </Link>
+                </Grid>
+              ) : null}
             </Grid>
             {locationObject.pathname === "/dashboard" ? (
-              <Grid>
+              <Grid size={1}>
                 <Paper
                   variant="outlined"
                   sx={{ p: 2, display: "flex", gap: 1 }}
@@ -205,24 +230,6 @@ export function GeochronologicalFilters() {
                     }}
                   />
                 </Paper>
-              </Grid>
-            ) : null}
-            {locationObject.pathname === "/" ? (
-              <Grid
-                container
-                sx={{ width: "100%" }}
-                justifyContent="end"
-                direction="row"
-              >
-                <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    endIcon={<ArrowRightAlt />}
-                  >
-                    Analisar
-                  </Button>
-                </Link>
               </Grid>
             ) : null}
           </Grid>
