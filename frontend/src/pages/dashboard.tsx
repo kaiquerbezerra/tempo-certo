@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router";
 import { Box, Grid, Typography } from "@mui/material";
-import { CloudRain, CloudSun } from "lucide-react";
+import { CloudRain, CloudSun, Sun } from "lucide-react";
 
 export function Dashboard() {
   const [searchParams] = useSearchParams();
@@ -88,8 +88,63 @@ export function Dashboard() {
         </Box>
       </Grid>
       <Grid size={4}>
-        <Box sx={{ backgroundColor: "#EADDFF" }}>
-          <h1>Previsão para {location}</h1>
+        <Box
+          sx={{ backgroundColor: "#EADDFF" }}
+          p={4}
+          borderRadius={7}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
+          <Typography fontSize={28}>Previsão para {location}</Typography>
+          <Box
+            sx={{ backgroundColor: "#FFFFFF" }}
+            borderRadius={7}
+            p={2}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Box display="flex" alignItems="center" gap={2}>
+              <Sun fill="black" />
+              <Typography fontSize={20}>20º / 24º</Typography>
+            </Box>
+            <Box>
+              <Typography>7 Abril, Seg</Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{ backgroundColor: "#FFFFFF" }}
+            borderRadius={7}
+            p={2}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Box display="flex" alignItems="center" gap={2}>
+              <Sun fill="black" />
+              <Typography fontSize={20}>20º / 24º</Typography>
+            </Box>
+            <Box>
+              <Typography>7 Abril, Seg</Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{ backgroundColor: "#FFFFFF" }}
+            borderRadius={7}
+            p={2}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Box display="flex" alignItems="center" gap={2}>
+              <Sun fill="black" />
+              <Typography fontSize={20}>20º / 24º</Typography>
+            </Box>
+            <Box>
+              <Typography>7 Abril, Seg</Typography>
+            </Box>
+          </Box>
         </Box>
       </Grid>
     </Grid>
