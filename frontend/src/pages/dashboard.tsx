@@ -1,10 +1,50 @@
 import { useSearchParams } from "react-router";
 import { Box, Grid, Typography } from "@mui/material";
-import { CloudRain, CloudSun, Sun } from "lucide-react";
+import { CloudRain, CloudSun, Cloudy, Sun } from "lucide-react";
+import dayjs from "dayjs";
+
+enum WeatherState {
+  PartlyCloudy = "partly-cloudy",
+  Cloudy = "cloudy",
+  Rainy = "rainy",
+  Sunny = "sunny",
+}
+
+const weatherStateIconLookup = {
+  [WeatherState.PartlyCloudy]: CloudSun,
+  [WeatherState.Cloudy]: Cloudy,
+  [WeatherState.Rainy]: CloudRain,
+  [WeatherState.Sunny]: Sun,
+};
 
 export function Dashboard() {
   const [searchParams] = useSearchParams();
-  const location = searchParams.get("location");
+  const locationParam = searchParams.get("location");
+
+  const {
+    location,
+    temperature,
+    humidity,
+    windSpeed,
+    weatherState,
+    weatherPreview,
+  } = {
+    weatherState: Object.values(WeatherState)[Math.floor(Math.random() * 4)],
+    location: {
+      name: locationParam!,
+      country: "Inglaterra",
+    },
+    temperature: 20,
+    humidity: 24,
+    windSpeed: 13,
+    weatherPreview: Array.from({ length: 10 }).map((_, i) => ({
+      time: dayjs().add(i, "hour"),
+      weatherState: Object.values(WeatherState)[Math.floor(Math.random() * 4)],
+      temperature: Math.floor(Math.random() * 30),
+    })),
+  };
+
+  const WeatherStateIcon = weatherStateIconLookup[weatherState];
 
   return (
     <Grid container justifyContent="space-between">
@@ -12,7 +52,7 @@ export function Dashboard() {
         <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
           <Grid container direction="column" spacing={2}>
             <Grid container direction="row" justifyContent="space-between">
-              <CloudSun style={{ width: "64px", height: "64px" }} />
+              {<WeatherStateIcon width={64} height={64} />}
               <Grid
                 container
                 justifyContent="start"
@@ -22,9 +62,9 @@ export function Dashboard() {
                 spacing={1}
               >
                 <Typography fontSize={24} fontWeight="medium">
-                  Bermingham
+                  {location.name}
                 </Typography>
-                <Typography fontSize={14}>Inglaterra</Typography>
+                <Typography fontSize={14}>{location.country}</Typography>
               </Grid>
               <Grid
                 size={2}
@@ -35,7 +75,7 @@ export function Dashboard() {
                 spacing={1}
               >
                 <Typography fontSize={24} fontWeight="medium">
-                  20º
+                  {temperature}º
                 </Typography>
                 <Typography fontSize={14}>Temperatura</Typography>
               </Grid>
@@ -48,41 +88,46 @@ export function Dashboard() {
                 spacing={1}
               >
                 <Typography fontSize={24} fontWeight="medium">
-                  24%
+                  {humidity}%
                 </Typography>
                 <Typography fontSize={14}>Umidade</Typography>
               </Grid>
               <Grid size={3}>
                 <Typography fontSize={24} fontWeight="medium">
-                  13km/h
+                  {windSpeed}km/h
                 </Typography>
                 <Typography fontSize={14}>Velocidade do vento</Typography>
               </Grid>
             </Grid>
             <Grid container direction="row" spacing={2}>
-              {Array.from({ length: 10 }).map(() => (
-                <Box
-                  sx={{ backgroundColor: "#FFD8E4" }}
-                  borderRadius={5}
-                  paddingX={2.2}
-                  paddingY={1}
-                >
-                  <Grid
-                    container
-                    direction="column"
-                    spacing={2}
-                    alignItems="center"
+              {weatherPreview.map((item, index) => {
+                const WeatherStateIcon =
+                  weatherStateIconLookup[item.weatherState];
+                return (
+                  <Box
+                    key={index}
+                    sx={{ backgroundColor: "#FFD8E4" }}
+                    borderRadius={5}
+                    paddingX={2.1}
+                    paddingY={1}
                   >
-                    <Typography fontSize={10} fontWeight="bold">
-                      10 am
-                    </Typography>
-                    <CloudRain fill="black" />
-                    <Typography fontSize={10} fontWeight="bold">
-                      20º
-                    </Typography>
-                  </Grid>
-                </Box>
-              ))}
+                    <Grid
+                      container
+                      direction="column"
+                      spacing={2}
+                      alignItems="center"
+                    >
+                      <Typography fontSize={10} fontWeight="bold">
+                        {item.time.format("hh a")}
+                      </Typography>
+                      <WeatherStateIcon fill="black" />
+                      <Typography fontSize={10} fontWeight="bold">
+                        {item.temperature}º
+                      </Typography>
+                    </Grid>
+                  </Box>
+                );
+              })}
             </Grid>
           </Grid>
         </Box>
@@ -96,7 +141,7 @@ export function Dashboard() {
           flexDirection="column"
           gap={2}
         >
-          <Typography fontSize={28}>Previsão para {location}</Typography>
+          <Typography fontSize={28}>Previsão para {locationParam}</Typography>
           <Box
             sx={{ backgroundColor: "#FFFFFF" }}
             borderRadius={7}
