@@ -1,3 +1,8 @@
+import dayjs, { Dayjs } from "dayjs";
+import "dayjs/locale/pt-br";
+
+dayjs.locale("pt-br");
+
 import {
   Box,
   Button,
@@ -9,14 +14,12 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
 import { Link, Outlet, useLocation, useSearchParams } from "react-router";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import lodash from "lodash";
-import "dayjs/locale/pt-br.js";
 import { TemperatureUnitSwitch } from "../components/temperature-unit-switch.ts";
 
 export function GeochronologicalFilters() {
@@ -105,7 +108,7 @@ export function GeochronologicalFilters() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
-      <Box display="flex" flexDirection="column" height="100%" gap={2} py={1}>
+      <Box display="flex" flexDirection="column" height="100dvh" gap={2} py={1}>
         <Box px={4}>
           <Grid container spacing={2} justifyItems="center" direction="column">
             <Grid container justifyContent="space-between" alignItems="center">
@@ -283,7 +286,7 @@ export function GeochronologicalFilters() {
             </Grid>
           </Grid>
         </Box>
-        <Box flexGrow={1} px={4}>
+        <Box display="flex" flexGrow={1} px={4}>
           <Outlet />
         </Box>
       </Box>

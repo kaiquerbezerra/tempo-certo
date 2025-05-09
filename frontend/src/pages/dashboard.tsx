@@ -26,29 +26,6 @@ export function Dashboard() {
   const startsAt = startsAtParam ? dayjs(startsAtParam) : null;
   const endsAt = endsAtParam ? dayjs(endsAtParam) : null;
 
-  const hoursDiff = (startsAt && endsAt?.diff(startsAt, "hour")) || 0;
-  const hoursDiffFromTen = Math.floor(10 - hoursDiff);
-  const moreThanTenHours = hoursDiffFromTen < 0;
-  const hoursToAdd = moreThanTenHours ? 0 : hoursDiffFromTen;
-
-  const filtersHoursSeries =
-    startsAt &&
-    endsAt &&
-    Array.from({ length: hoursDiff + 1 }).map((_, i) =>
-      startsAt.add(i, "hour"),
-    );
-  const complementaryHoursSeries =
-    startsAt &&
-    endsAt &&
-    Array.from({ length: hoursToAdd - 1 })
-      .map((_, i) => startsAt.subtract(i + 1, "hour"))
-      .reverse();
-  const hoursSeries =
-    startsAt && endsAt && complementaryHoursSeries!.concat(filtersHoursSeries!);
-  const weatherSeries =
-    hoursSeries &&
-    Array.from({ length: hoursSeries.length }).map(() => Math.random() * 30);
-
   const {
     location,
     temperature,
@@ -74,8 +51,57 @@ export function Dashboard() {
 
   const WeatherStateIcon = weatherStateIconLookup[weatherState];
 
+  const daysDiff = (startsAt && endsAt?.diff(startsAt, "day")) || 0;
+  const daysDiffFromEight = Math.floor(8 - daysDiff);
+  const moreThanEightDays = daysDiffFromEight < 0;
+  const daysToAdd = moreThanEightDays ? 0 : daysDiffFromEight;
+
+  const filtersDaysSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: daysDiff + 1 }).map((_, i) => startsAt.add(i, "day"));
+  const complementaryDaysSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: daysToAdd - 1 })
+      .map((_, i) => startsAt.subtract(i + 1, "day"))
+      .reverse();
+  const daysSeries =
+    startsAt && endsAt && complementaryDaysSeries!.concat(filtersDaysSeries!);
+  const forecastSeries =
+    daysSeries &&
+    daysSeries.map((item) => ({
+      date: item,
+      min: Math.floor(Math.random() * 30),
+      max: Math.floor(Math.random() * 30),
+      weatherState: Object.values(WeatherState)[Math.floor(Math.random() * 4)],
+    }));
+
+  const hoursDiff = (startsAt && endsAt?.diff(startsAt, "hour")) || 0;
+  const hoursDiffFromTen = Math.floor(10 - hoursDiff);
+  const moreThanTenHours = hoursDiffFromTen < 0;
+  const hoursToAdd = moreThanTenHours ? 0 : hoursDiffFromTen;
+
+  const filtersHoursSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: hoursDiff + 1 }).map((_, i) =>
+      startsAt.add(i, "hour"),
+    );
+  const complementaryHoursSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: hoursToAdd - 1 })
+      .map((_, i) => startsAt.subtract(i + 1, "hour"))
+      .reverse();
+  const hoursSeries =
+    startsAt && endsAt && complementaryHoursSeries!.concat(filtersHoursSeries!);
+  const weatherSeries =
+    hoursSeries &&
+    Array.from({ length: hoursSeries.length }).map(() => Math.random() * 30);
+
   return (
-    <Grid container gap={8}>
+    <Grid flexGrow={1} container py={1} gap={8}>
       <Grid size={7} gap={4} container>
         <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
           <Grid container direction="column" spacing={2}>
@@ -166,7 +192,12 @@ export function Dashboard() {
               {
                 scaleType: "time",
                 data: hoursSeries,
-                valueFormatter: (value) => dayjs(value).format("hh a"),
+                valueFormatter: (value) => dayjs(value).format("D - hh a"),
+              },
+            ]}
+            yAxis={[
+              {
+                valueFormatter: (value: number) => `${value.toFixed(1)}º`,
               },
             ]}
             series={[
@@ -190,54 +221,30 @@ export function Dashboard() {
           flexGrow={1}
         >
           <Typography fontSize={28}>Previsão para {locationParam}</Typography>
-          <Box
-            sx={{ backgroundColor: "#FFFFFF" }}
-            borderRadius={7}
-            p={2}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box display="flex" alignItems="center" gap={2}>
-              <Sun fill="black" />
-              <Typography fontSize={20}>20º / 24º</Typography>
-            </Box>
-            <Box>
-              <Typography>7 Abril, Seg</Typography>
-            </Box>
-          </Box>
-          <Box
-            sx={{ backgroundColor: "#FFFFFF" }}
-            borderRadius={7}
-            p={2}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box display="flex" alignItems="center" gap={2}>
-              <Sun fill="black" />
-              <Typography fontSize={20}>20º / 24º</Typography>
-            </Box>
-            <Box>
-              <Typography>7 Abril, Seg</Typography>
-            </Box>
-          </Box>
-          <Box
-            sx={{ backgroundColor: "#FFFFFF" }}
-            borderRadius={7}
-            p={2}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box display="flex" alignItems="center" gap={2}>
-              <Sun fill="black" />
-              <Typography fontSize={20}>20º / 24º</Typography>
-            </Box>
-            <Box>
-              <Typography>7 Abril, Seg</Typography>
-            </Box>
-          </Box>
+          {forecastSeries?.map((item, index) => {
+            const WeatherStateIcon = weatherStateIconLookup[item.weatherState];
+            return (
+              <Box
+                key={index}
+                sx={{ backgroundColor: "#FFFFFF" }}
+                borderRadius={7}
+                p={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Box display="flex" alignItems="center" gap={2}>
+                  <WeatherStateIcon fill="black" />
+                  <Typography fontSize={20}>
+                    {item.min}º / {item.max}º
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography>{item.date.format("D MMMM, ddd")}</Typography>
+                </Box>
+              </Box>
+            );
+          })}
         </Box>
       </Grid>
     </Grid>
