@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router";
 import { Box, Grid, Typography } from "@mui/material";
 import { CloudRain, CloudSun, Cloudy, Sun } from "lucide-react";
 import dayjs from "dayjs";
+import { LineChart } from "@mui/x-charts";
 
 enum WeatherState {
   PartlyCloudy = "partly-cloudy",
@@ -20,6 +21,33 @@ const weatherStateIconLookup = {
 export function Dashboard() {
   const [searchParams] = useSearchParams();
   const locationParam = searchParams.get("location");
+  const startsAtParam = searchParams.get("startsAt");
+  const endsAtParam = searchParams.get("endsAt");
+  const startsAt = startsAtParam ? dayjs(startsAtParam) : null;
+  const endsAt = endsAtParam ? dayjs(endsAtParam) : null;
+
+  const hoursDiff = (startsAt && endsAt?.diff(startsAt, "hour")) || 0;
+  const hoursDiffFromTen = Math.floor(10 - hoursDiff);
+  const moreThanTenHours = hoursDiffFromTen < 0;
+  const hoursToAdd = moreThanTenHours ? 0 : hoursDiffFromTen;
+
+  const filtersHoursSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: hoursDiff + 1 }).map((_, i) =>
+      startsAt.add(i, "hour"),
+    );
+  const complementaryHoursSeries =
+    startsAt &&
+    endsAt &&
+    Array.from({ length: hoursToAdd - 1 })
+      .map((_, i) => startsAt.subtract(i + 1, "hour"))
+      .reverse();
+  const hoursSeries =
+    startsAt && endsAt && complementaryHoursSeries!.concat(filtersHoursSeries!);
+  const weatherSeries =
+    hoursSeries &&
+    Array.from({ length: hoursSeries.length }).map(() => Math.random() * 30);
 
   const {
     location,
@@ -38,7 +66,7 @@ export function Dashboard() {
     humidity: 24,
     windSpeed: 13,
     weatherPreview: Array.from({ length: 10 }).map((_, i) => ({
-      time: dayjs().add(i, "hour"),
+      time: startsAt!.add(i, "hour"),
       weatherState: Object.values(WeatherState)[Math.floor(Math.random() * 4)],
       temperature: Math.floor(Math.random() * 30),
     })),
@@ -47,8 +75,8 @@ export function Dashboard() {
   const WeatherStateIcon = weatherStateIconLookup[weatherState];
 
   return (
-    <Grid container justifyContent="space-between">
-      <Grid size={7}>
+    <Grid container gap={8}>
+      <Grid size={7} gap={4} container>
         <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
           <Grid container direction="column" spacing={2}>
             <Grid container direction="row" justifyContent="space-between">
@@ -131,8 +159,27 @@ export function Dashboard() {
             </Grid>
           </Grid>
         </Box>
+        {hoursSeries && weatherSeries && (
+          <LineChart
+            sx={{ flexGrow: 1 }}
+            xAxis={[
+              {
+                scaleType: "time",
+                data: hoursSeries,
+                valueFormatter: (value) => dayjs(value).format("hh a"),
+              },
+            ]}
+            series={[
+              {
+                data: weatherSeries,
+                valueFormatter: (value) =>
+                  value !== null ? `${value.toFixed(1)}º` : "",
+              },
+            ]}
+          />
+        )}
       </Grid>
-      <Grid size={4}>
+      <Grid container size={4} flexGrow={1}>
         <Box
           sx={{ backgroundColor: "#EADDFF" }}
           p={4}
@@ -140,6 +187,7 @@ export function Dashboard() {
           display="flex"
           flexDirection="column"
           gap={2}
+          flexGrow={1}
         >
           <Typography fontSize={28}>Previsão para {locationParam}</Typography>
           <Box
