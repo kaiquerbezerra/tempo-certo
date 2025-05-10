@@ -104,7 +104,7 @@ export function Dashboard() {
     <Grid flexGrow={1} container py={1} gap={8}>
       <Grid size={7} gap={4} container>
         <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
-          <Grid container direction="column" spacing={2}>
+          <Grid container direction="column" spacing={1}>
             <Grid container direction="row" justifyContent="space-between">
               {<WeatherStateIcon width={64} height={64} />}
               <Grid

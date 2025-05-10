@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router";
 export function Home() {
   const [searchParams] = useSearchParams();
   return (
-    <Box mt={4} height={500} borderRadius={2} overflow="hidden" boxShadow={1}>
+    <Box borderRadius={2} flexGrow={1}>
       <iframe
         title="map"
         width="100%"

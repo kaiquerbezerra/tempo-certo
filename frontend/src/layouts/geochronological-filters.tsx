@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
 import { Link, Outlet, useLocation, useSearchParams } from "react-router";
@@ -97,13 +97,16 @@ export function GeochronologicalFilters() {
         : "",
   });
 
-  const setSearchParamDebounced = lodash.debounce(
-    (key: string, value: string) =>
-      setSearchParams((prev) => {
-        prev.set(key, value);
-        return prev;
-      }),
-    750,
+  const setSearchParamDebounced = useCallback(
+    lodash.debounce(
+      (key: string, value: string) =>
+        setSearchParams((prev) => {
+          prev.set(key, value);
+          return prev;
+        }),
+      750,
+    ),
+    [searchParams],
   );
 
   return (
