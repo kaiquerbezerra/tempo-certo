@@ -102,7 +102,7 @@ export function Dashboard() {
 
   return (
     <Grid flexGrow={1} container py={1} gap={8}>
-      <Grid size={7} gap={4} container>
+      <Grid size={7} gap={4} container flexDirection="column">
         <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
           <Grid container direction="column" spacing={1}>
             <Grid container direction="row" justifyContent="space-between">
@@ -153,7 +153,7 @@ export function Dashboard() {
                 <Typography fontSize={14}>Velocidade do vento</Typography>
               </Grid>
             </Grid>
-            <Grid container direction="row" spacing={2}>
+            <Grid container direction="row" justifyContent="space-between">
               {weatherPreview.map((item, index) => {
                 const WeatherStateIcon =
                   weatherStateIconLookup[item.weatherState];
