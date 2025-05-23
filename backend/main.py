@@ -146,7 +146,6 @@ async def get_weather_forecast(
 
         unit = "f" if isUsingFahrenheit else "c"
 
-        # Dados atuais
         current = data["current"]
         current_weather = {
             "country": data["location"]["country"],
@@ -156,7 +155,6 @@ async def get_weather_forecast(
             "windSpeed": current["wind_kph"],
         }
 
-        # Previsão horária
         hourly_data = []
         for day in data["forecast"]["forecastday"]:
             for hour in day["hour"]:
@@ -168,14 +166,12 @@ async def get_weather_forecast(
                     "timestamp": hour["time_epoch"]
                 })
 
-        # Lista ordenada e filtrada
         hourly_data.sort(key=lambda x: x["timestamp"])
         highlighted_hours = [
             h for h in hourly_data
             if startsAt.timestamp() <= h["timestamp"] <= endsAt.timestamp()
         ]
 
-        # Preencher com próximos valores se tiver menos de 10
         if len(highlighted_hours) < 10:
             next_items = [
                 h for h in hourly_data
@@ -184,13 +180,10 @@ async def get_weather_forecast(
             to_add = next_items[:10 - len(highlighted_hours)]
             highlighted_hours.extend(to_add)
 
-        # Previsão diária com lógica customizada para 8 dias em torno de startsAt.date()
         forecast_days = data["forecast"]["forecastday"]
 
-        # Datas dos dias da previsão convertidas para date
         forecast_dates = [datetime.strptime(day["date"], "%Y-%m-%d").date() for day in forecast_days]
 
-        # Index do primeiro dia >= startsAt.date()
         start_index = 0
         for i, d in enumerate(forecast_dates):
             if d >= startsAt.date():
@@ -216,7 +209,6 @@ async def get_weather_forecast(
         # Garantir que a lista tenha no máximo 8 dias (pega últimos 8 dias caso tenha mais)
         forecast_days_selected = forecast_days_selected[-8:]
 
-        # Monta o forecastPreview
         forecastPreview = []
         for day in forecast_days_selected:
             forecastPreview.append({
