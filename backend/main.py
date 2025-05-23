@@ -182,35 +182,33 @@ async def get_weather_forecast(
 
         forecast_days = data["forecast"]["forecastday"]
 
-        forecast_dates = [datetime.strptime(day["date"], "%Y-%m-%d").date() for day in forecast_days]
-
-        start_index = 0
-        for i, d in enumerate(forecast_dates):
-            if d >= startsAt.date():
-                start_index = i
-                break
-        else:
-            start_index = len(forecast_dates) - 1
-
-        # Pega até 8 dias a partir do start_index
-        forward_days = forecast_days[start_index:start_index + 8]
-
-        # Quantos dias faltam para completar 8
-        missing = 8 - len(forward_days)
-
-        # Pega dias anteriores para completar, se necessário
-        backward_days = []
-        if missing > 0 and start_index > 0:
-            backward_days = forecast_days[max(0, start_index - missing):start_index]
-
-        # Junta os dias anteriores e os dias para frente (em ordem cronológica)
-        forecast_days_selected = backward_days + forward_days
-
-        # Garantir que a lista tenha no máximo 8 dias (pega últimos 8 dias caso tenha mais)
-        forecast_days_selected = forecast_days_selected[-8:]
+        days_in_range = [
+            day for day in forecast_days 
+            if startsAt.date() <= datetime.strptime(day["date"], "%Y-%m-%d").date() <= endsAt.date()
+        ]
+        
+        if len(days_in_range) < 8:
+            days_after = [
+                day for day in forecast_days 
+                if datetime.strptime(day["date"], "%Y-%m-%d").date() > endsAt.date()
+            ]
+            
+            days_before = [
+                day for day in forecast_days 
+                if datetime.strptime(day["date"], "%Y-%m-%d").date() < startsAt.date()
+            ]
+            
+            days_to_add_after = days_after[:8 - len(days_in_range)]
+            days_in_range.extend(days_to_add_after)
+            
+            if len(days_in_range) < 8:
+                days_to_add_before = days_before[-(8 - len(days_in_range)):]
+                days_in_range = days_to_add_before + days_in_range
+        
+        days_in_range.sort(key=lambda day: datetime.strptime(day["date"], "%Y-%m-%d").date())
 
         forecastPreview = []
-        for day in forecast_days_selected:
+        for day in days_in_range:
             forecastPreview.append({
                 "date": datetime.strptime(day["date"], "%Y-%m-%d").date().isoformat(),
                 "min": day["day"][f"mintemp_{unit}"],
