@@ -74,15 +74,17 @@ WEATHER_ICON_MAPPING = {
     "Moderate or heavy snow in area with thunder": 395
 }
 
+
 def map_weather_state(condition: str) -> int:
     return WEATHER_ICON_MAPPING.get(condition, 0)  # 0 = Desconhecido
 
+
 @app.get("/api/weather-forecast")
 async def get_weather_forecast(
-    location: str = Query(..., description="Nome da cidade alvo"),
-    startsAt: datetime = Query(..., description="Data e hora de início (YYYY-MM-DD HH:MM)"),
-    endsAt: datetime = Query(..., description="Data e hora de fim (YYYY-MM-DD HH:MM)"),
-    isUsingFahrenheit: bool = Query(False, description="Define a unidade de temperatura")
+        location: str = Query(..., description="Nome da cidade alvo"),
+        startsAt: datetime = Query(..., description="Data e hora de início (YYYY-MM-DD HH:MM)"),
+        endsAt: datetime = Query(..., description="Data e hora de fim (YYYY-MM-DD HH:MM)"),
+        isUsingFahrenheit: bool = Query(False, description="Define a unidade de temperatura")
 ):
     try:
         try:
@@ -107,7 +109,7 @@ async def get_weather_forecast(
                 }
             )
 
-        if startsAt.date() < now:
+        if startsAt.date().day < now.day or startsAt.date().month < now.month or startsAt.date().year < now.year:
             raise HTTPException(
                 status_code=400,
                 detail={
@@ -117,7 +119,7 @@ async def get_weather_forecast(
                 }
             )
 
-        if endsAt.date() > now + timedelta(days=14):
+        if endsAt.date() > (now + timedelta(days=14)):
             raise HTTPException(
                 status_code=400,
                 detail={
@@ -183,28 +185,28 @@ async def get_weather_forecast(
         forecast_days = data["forecast"]["forecastday"]
 
         days_in_range = [
-            day for day in forecast_days 
+            day for day in forecast_days
             if startsAt.date() <= datetime.strptime(day["date"], "%Y-%m-%d").date() <= endsAt.date()
         ]
-        
+
         if len(days_in_range) < 8:
             days_after = [
-                day for day in forecast_days 
+                day for day in forecast_days
                 if datetime.strptime(day["date"], "%Y-%m-%d").date() > endsAt.date()
             ]
-            
+
             days_before = [
-                day for day in forecast_days 
+                day for day in forecast_days
                 if datetime.strptime(day["date"], "%Y-%m-%d").date() < startsAt.date()
             ]
-            
+
             days_to_add_after = days_after[:8 - len(days_in_range)]
             days_in_range.extend(days_to_add_after)
-            
+
             if len(days_in_range) < 8:
                 days_to_add_before = days_before[-(8 - len(days_in_range)):]
                 days_in_range = days_to_add_before + days_in_range
-        
+
         days_in_range.sort(key=lambda day: datetime.strptime(day["date"], "%Y-%m-%d").date())
 
         forecastPreview = []
