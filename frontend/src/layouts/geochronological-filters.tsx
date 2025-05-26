@@ -31,11 +31,12 @@ export function GeochronologicalFilters() {
   const endsAt = endsAtParam ? new Date(endsAtParam) : null;
 
   const [startDate, setStartDate] = useState<Dayjs | null>(
-    startsAt &&
-      dayjs()
-        .year(startsAt.getFullYear())
-        .month(startsAt.getMonth())
-        .date(startsAt.getDate()),
+    startsAt
+      ? dayjs()
+          .year(startsAt.getFullYear())
+          .month(startsAt.getMonth())
+          .date(startsAt.getDate())
+      : dayjs(),
   );
   const [endDate, setEndDate] = useState<Dayjs | null>(
     endsAt &&
@@ -45,11 +46,12 @@ export function GeochronologicalFilters() {
         .date(endsAt.getDate()),
   );
   const [startTime, setStartTime] = useState<Dayjs | null>(
-    startsAt &&
-      dayjs()
-        .hour(startsAt.getHours())
-        .minute(startsAt.getMinutes())
-        .second(startsAt.getSeconds()),
+    startsAt
+      ? dayjs()
+          .hour(startsAt.getHours())
+          .minute(startsAt.getMinutes())
+          .second(startsAt.getSeconds())
+      : dayjs(),
   );
   const [endTime, setEndTime] = useState<Dayjs | null>(
     endsAt &&
