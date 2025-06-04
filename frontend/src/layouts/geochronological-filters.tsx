@@ -113,188 +113,194 @@ export function GeochronologicalFilters() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
-      <Box display="flex" flexDirection="column" height="100dvh" gap={2} py={1}>
-        <Box px={4}>
-          <Grid container spacing={2} justifyItems="center" direction="column">
-            <Grid container justifyContent="space-between" alignItems="center">
-              <Grid
-                container
-                direction="row"
-                alignItems="center"
-                justifyContent="start"
-                size={11}
-              >
-                <Grid size={4}>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 2, display: "flex", gap: 1 }}
-                  >
-                    <DatePicker
-                      label="Data de início"
-                      value={startDate}
-                      onChange={(value) => {
-                        setStartDate(value);
-                        setSearchParamDebounced(
-                          "startsAt",
-                          value!
-                            .hour(startTime!.hour())
-                            .minute(startTime!.minute())
-                            .toISOString(),
-                        );
-                      }}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                    <TimePicker
-                      label="Hora de início"
-                      value={startTime}
-                      onChange={(value) => {
-                        setStartTime(value);
-                        setSearchParamDebounced(
-                          "startsAt",
-                          value!
-                            .date(startDate!.date())
-                            .month(startDate!.month())
-                            .year(startDate!.year())
-                            .millisecond(0)
-                            .toISOString(),
-                        );
-                      }}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-                <Grid size={4}>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 2, display: "flex", gap: 1 }}
-                  >
-                    <DatePicker
-                      label="Data de término"
-                      value={endDate}
-                      onChange={(value) => {
-                        setEndDate(value);
-                        setSearchParamDebounced(
-                          "endsAt",
-                          value!
-                            .hour(endTime!.hour())
-                            .minute(endTime!.minute())
-                            .second(0)
-                            .millisecond(0)
-                            .toISOString(),
-                        );
-                      }}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                    <TimePicker
-                      label="Hora de término"
-                      value={endTime}
-                      onChange={(value) => {
-                        setEndTime(value);
-                        setSearchParamDebounced(
-                          "endsAt",
-                          value!
-                            .date(endDate!.date())
-                            .month(endDate!.month())
-                            .year(endDate!.year())
-                            .millisecond(0)
-                            .toISOString(),
-                        );
-                      }}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-                <Grid>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 2, display: "flex", gap: 1 }}
-                  >
-                    <TextField
-                      fullWidth
-                      size="small"
-                      placeholder="Buscar cidade"
-                      value={location}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        setLocation(e.target.value);
-                        setSearchParamDebounced("location", e.target.value);
-                      }}
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon fontSize="small" />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-                {locationObject.pathname === "/" ? (
-                  <Grid
-                    container
-                    justifyContent="start"
-                    direction="row"
-                    size={2}
-                  >
-                    <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
-                      <Button
-                        variant="contained"
-                        size="medium"
-                        endIcon={<ArrowRightAlt />}
-                      >
-                        Analisar
-                      </Button>
-                    </Link>
-                  </Grid>
-                ) : null}
-              </Grid>
-              {locationObject.pathname === "/dashboard" ? (
-                <Grid size={1}>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 2, display: "flex", gap: 1 }}
-                  >
-                    <TemperatureUnitSwitch
-                      checked={isUsingFahrenheit}
-                      onChange={() => {
-                        setIsUsingFahrenheit((prev) => !prev);
-                        setSearchParams((prev) => {
-                          prev.set(
-                            "isUsingFahrenheit",
-                            String(!(prev.get("isUsingFahrenheit") === "true")),
-                          );
-                          return prev;
-                        });
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-              ) : null}
-            </Grid>
+  <Box display="flex" flexDirection="column" height="100dvh" gap={2} py={1}>
+    <Box px={4}>
+      <Grid container spacing={2} direction="column">
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+        >
+          {/* Filtro de Datas */}
+          <Grid item xs={12} md={4}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 2,
+                display: "flex",
+                gap: 1,
+                borderRadius: 3,
+              }}
+            >
+              <DatePicker
+                label="Data de início"
+                value={startDate}
+                onChange={(value) => {
+                  setStartDate(value);
+                  setSearchParamDebounced(
+                    "startsAt",
+                    value!
+                      .hour(startTime!.hour())
+                      .minute(startTime!.minute())
+                      .toISOString(),
+                  );
+                }}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+              <TimePicker
+                label="Hora de início"
+                value={startTime}
+                onChange={(value) => {
+                  setStartTime(value);
+                  setSearchParamDebounced(
+                    "startsAt",
+                    value!
+                      .date(startDate!.date())
+                      .month(startDate!.month())
+                      .year(startDate!.year())
+                      .toISOString(),
+                  );
+                }}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+            </Paper>
           </Grid>
-        </Box>
-        <Box display="flex" flexGrow={1} px={4}>
-          <Outlet />
-        </Box>
-      </Box>
-    </LocalizationProvider>
+
+          <Grid item xs={12} md={4}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 2,
+                display: "flex",
+                gap: 1,
+                borderRadius: 3,
+              }}
+            >
+              <DatePicker
+                label="Data de término"
+                value={endDate}
+                onChange={(value) => {
+                  setEndDate(value);
+                  setSearchParamDebounced(
+                    "endsAt",
+                    value!
+                      .hour(endTime!.hour())
+                      .minute(endTime!.minute())
+                      .toISOString(),
+                  );
+                }}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+              <TimePicker
+                label="Hora de término"
+                value={endTime}
+                onChange={(value) => {
+                  setEndTime(value);
+                  setSearchParamDebounced(
+                    "endsAt",
+                    value!
+                      .date(endDate!.date())
+                      .month(endDate!.month())
+                      .year(endDate!.year())
+                      .toISOString(),
+                  );
+                }}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+            </Paper>
+          </Grid>
+
+          {/* Busca por localização */}
+          <Grid item xs={12} md={3}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 2,
+                display: "flex",
+                alignItems: "center",
+                borderRadius: 3,
+              }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Buscar cidade"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  setSearchParamDebounced("location", e.target.value);
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Paper>
+          </Grid>
+
+          {/* Botão Analisar */}
+          {locationObject.pathname === "/" && (
+            <Grid item xs={12} md={1}>
+              <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
+                <Button
+                  variant="contained"
+                  size="medium"
+                  fullWidth
+                  sx={{
+                    borderRadius: 3,
+                    height: "100%",
+                    textTransform: "none",
+                  }}
+                  endIcon={<ArrowRightAlt />}
+                >
+                  Analisar
+                </Button>
+              </Link>
+            </Grid>
+          )}
+
+          {/* Switch de Temperatura */}
+          {locationObject.pathname === "/dashboard" && (
+            <Grid item xs={12} md={1}>
+              <Paper
+                elevation={4}
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  borderRadius: 3,
+                }}
+              >
+                <TemperatureUnitSwitch
+                  checked={isUsingFahrenheit}
+                  onChange={() => {
+                    setIsUsingFahrenheit((prev) => !prev);
+                    setSearchParams((prev) => {
+                      prev.set(
+                        "isUsingFahrenheit",
+                        String(!(prev.get("isUsingFahrenheit") === "true")),
+                      );
+                      return prev;
+                    });
+                  }}
+                />
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
+    </Box>
+
+    {/* Outlet para conteúdo */}
+    <Box display="flex" flexGrow={1} px={4}>
+      <Outlet />
+    </Box>
+  </Box>
+</LocalizationProvider>
+
   );
 }
