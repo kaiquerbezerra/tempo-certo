@@ -21,6 +21,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import lodash from "lodash";
 import { TemperatureUnitSwitch } from "../components/temperature-unit-switch.ts";
+import { useNavigate } from "react-router";
 
 export function GeochronologicalFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,6 +30,7 @@ export function GeochronologicalFilters() {
   const startsAt = startsAtParam ? new Date(startsAtParam) : null;
   const endsAtParam = searchParams.get("endsAt");
   const endsAt = endsAtParam ? new Date(endsAtParam) : null;
+  const navigate = useNavigate();
 
   const [startDate, setStartDate] = useState<Dayjs | null>(
     startsAt
@@ -122,7 +124,6 @@ export function GeochronologicalFilters() {
           alignItems="center"
           spacing={2}
         >
-          {/* Filtro de Datas */}
           <Grid item xs={12} md={4}>
             <Paper
               elevation={4}
@@ -211,7 +212,6 @@ export function GeochronologicalFilters() {
             </Paper>
           </Grid>
 
-          {/* Busca por localização */}
           <Grid item xs={12} md={3}>
             <Paper
               elevation={4}
@@ -242,7 +242,6 @@ export function GeochronologicalFilters() {
             </Paper>
           </Grid>
 
-          {/* Botão Analisar */}
           {locationObject.pathname === "/" && (
             <Grid item xs={12} md={1}>
               <Link to={`/dashboard?${dashboardQueryParams.toString()}`}>
@@ -263,8 +262,8 @@ export function GeochronologicalFilters() {
             </Grid>
           )}
 
-          {/* Switch de Temperatura */}
           {locationObject.pathname === "/dashboard" && (
+          <>
             <Grid item xs={12} md={1}>
               <Paper
                 elevation={4}
@@ -290,12 +289,28 @@ export function GeochronologicalFilters() {
                 />
               </Paper>
             </Grid>
-          )}
+
+            <Grid item xs={12} md="auto">
+              <Button
+                variant="contained"
+                size="medium"
+                startIcon={<ArrowRightAlt />}
+                onClick={() => navigate("/")}
+                sx={{
+                    borderRadius: 3,
+                    height: "100%",
+                    textTransform: "none",
+                  }}
+              >
+                Voltar para Home
+              </Button>
+            </Grid>
+          </>
+        )}
         </Grid>
       </Grid>
     </Box>
 
-    {/* Outlet para conteúdo */}
     <Box display="flex" flexGrow={1} px={4}>
       <Outlet />
     </Box>

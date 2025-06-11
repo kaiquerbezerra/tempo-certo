@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography, Button } from "@mui/material";
 import {
   Cloud,
   CloudDrizzle,
@@ -17,6 +17,8 @@ import dayjs from "dayjs";
 import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import * as React from "react";
+import { useNavigate } from "react-router";
+
 
 const weatherStateIconLookup: {
   [code: number]: React.ForwardRefExoticComponent<
@@ -139,7 +141,7 @@ export function Dashboard() {
   return (
     <Grid flexGrow={1} container py={1} gap={8}>
       <Grid size={7} gap={4} container flexDirection="column">
-        <Box sx={{ backgroundColor: "#EADDFF" }} p={4} borderRadius={7}>
+        <Box sx={{ backgroundColor: 'rgb(255, 255, 255)' }} p={4} borderRadius={2}>
           <Grid container direction="column" spacing={1}>
             <Grid container direction="row" justifyContent="space-between">
               {<WeatherStateIcon width={64} height={64} />}
@@ -198,7 +200,7 @@ export function Dashboard() {
                 return (
                   <Box
                     key={index}
-                    sx={{ backgroundColor: "#FFD8E4" }}
+                    sx={{ backgroundColor: 'rgb(216, 215, 215)' }}
                     borderRadius={5}
                     paddingX={2.1}
                     paddingY={1}
@@ -224,38 +226,43 @@ export function Dashboard() {
           </Grid>
         </Box>
 
-        <LineChart
-          sx={{ flexGrow: 1 }}
-          xAxis={[
-            {
-              scaleType: "time",
-              data: weatherForecastData.weatherSeries.map(({ time }) =>
-                dayjs(time),
-              ),
-              valueFormatter: (value) => dayjs(value).format("D - hh a"),
-            },
-          ]}
-          yAxis={[
-            {
-              valueFormatter: (value: number) => `${value.toFixed(1)}º`,
-            },
-          ]}
-          series={[
-            {
-              data: weatherForecastData.weatherSeries.map(
-                ({ temperature }) => temperature,
-              ),
-              valueFormatter: (value) =>
-                value !== null ? `${value.toFixed(1)}º` : "",
-            },
-          ]}
-        />
-      </Grid>
+       <LineChart
+        sx={{
+          flexGrow: 1,
+          backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+          borderRadius: 2, 
+          padding: 2, 
+        }}
+        xAxis={[
+          {
+            scaleType: "time",
+            data: weatherForecastData.weatherSeries.map(({ time }) =>
+              dayjs(time),
+            ),
+            valueFormatter: (value) => dayjs(value).format("D - hh a"),
+          },
+        ]}
+        yAxis={[
+          {
+            valueFormatter: (value: number) => `${value.toFixed(1)}º`,
+          },
+        ]}
+        series={[
+          {
+            data: weatherForecastData.weatherSeries.map(
+              ({ temperature }) => temperature,
+            ),
+            valueFormatter: (value) =>
+              value !== null ? `${value.toFixed(1)}º` : "",
+          },
+        ]}
+      />
+            </Grid>
       <Grid container size={4} flexGrow={1}>
         <Box
-          sx={{ backgroundColor: "#EADDFF" }}
+          sx={{ backgroundColor: 'rgb(255, 255, 255)'  }}
           p={4}
-          borderRadius={7}
+          borderRadius={2}
           display="flex"
           flexDirection="column"
           gap={2}
@@ -267,7 +274,7 @@ export function Dashboard() {
             return (
               <Box
                 key={index}
-                sx={{ backgroundColor: "#FFFFFF" }}
+                sx={{ backgroundColor:  'rgb(216, 215, 215)' }}
                 borderRadius={7}
                 p={2}
                 display="flex"

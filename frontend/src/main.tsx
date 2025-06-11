@@ -9,24 +9,25 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <div
       style={{
-        position: "fixed", // fixa na tela inteira
+        position: "fixed",
         top: 0,
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: -1, // atrás de tudo
-        pointerEvents: "none", // não interfere nos cliques
+        zIndex: -1, 
+        pointerEvents: "none", 
       }}
     >
       <iframe
         title="background-map"
-        src={`https://www.google.com/maps?q=Sao Paulo&output=embed`}
+        src={`https://www.google.com/maps?output=embed`}
         style={{
           width: "100%",
           height: "100%",
           border: "none",
-          filter: "brightness(0.7) contrast(0.9)", // deixa o mapa meio fosco
+          filter: "brightness(0.7) contrast(0.9) saturate(0.9)", 
         }}
+        allowFullScreen
       />
     </div>
 
